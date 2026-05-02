@@ -1,7 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
 
-URL = "https://fentybeauty.com/en-fr/collections/makeup-face-foundation.json"
+URL = "https://fentybeauty.com/en-fr/collections/makeup-face-foundation/products.json"
 headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"}
 response = requests.get(URL, headers=headers)
 data = response.json()
