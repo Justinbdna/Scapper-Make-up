@@ -22,6 +22,7 @@ with open("fenty_teint.csv", "w", newline="", encoding="utf-8") as fichier:
             variante = product["variants"][0] if product.get("variants") else {}
             nb_teintes = len(product.get("variants", []))
             dispo = "en stock" if variante.get("available") else "rupture"
+            taille = variante.get("title", "")
             url_produit = f"https://fentybeauty.com/en-fr/products/{product['handle']}"
             soup_desc = BeautifulSoup(product.get("body_html", ""), "html.parser")
             description = soup_desc.get_text().strip()
@@ -44,7 +45,7 @@ with open("fenty_teint.csv", "w", newline="", encoding="utf-8") as fichier:
                 fini = "lumineux"
             else:
                 fini = ""
-            ligne = [product["title"], product.get("vendor"), product.get("product_type"), variante.get("price"), variante.get("compare_at_price", ""), "", "", "", nb_teintes, fini, couvrance, "", dispo, url_produit]
+            ligne = [product["title"], product.get("vendor"), product.get("product_type"), variante.get("price"), variante.get("compare_at_price", ""), taille, "", "", nb_teintes, fini, couvrance, "", dispo, url_produit]
             writer.writerow(ligne)
             print(f"Page {page} scrapée avec succès.")
         time.sleep(5)    
