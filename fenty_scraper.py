@@ -11,6 +11,10 @@ with open("fenty_teint.csv", "w", newline="", encoding="utf-8") as fichier:
     writer.writerow(["product_name", "brand", "category", "price", "promo_price", "volume_ml", "rating", "review_count", "shade_count", "finish_type", "coverage_level", "skin_type", "availability", "source_url"])
     for page in range(1, 6):
         response = requests.get(f"{URL}?page={page}", headers=headers)
+        if response.status_code != 200:
+            print(f"Erreur bloquante sur la page {page} : Code HTTP {response.status_code}")
+            break
+            
         data = response.json()
         produits = data.get("products", [])
         if not produits: break
