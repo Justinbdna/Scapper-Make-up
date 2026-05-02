@@ -30,28 +30,37 @@ with open("fenty_teint.csv", "w", newline="", encoding="utf-8") as fichier:
             soup_desc = BeautifulSoup(product.get("body_html", ""), "html.parser")
             description = soup_desc.get_text().strip()
             desc_lower = description.lower()
+            tags = [tag.lower() for tag in product.get("tags", [])]
             
-            # Déduction de la couvrance
-            if "full coverage" in desc_lower or "full" in desc_lower:
+           # Déduction de la couvrance via description ET tags
+            if "full coverage" in desc_lower or "full" in desc_lower or any("full" in t for t in tags):
                 couvrance = "couvrant"
-            elif "medium" in desc_lower:
+            elif "medium" in desc_lower or any("medium" in t for t in tags):
                 couvrance = "moyen"
-            elif "light" in desc_lower or "sheer" in desc_lower or "blurring" in desc_lower:
+            elif "light" in desc_lower or "sheer" in desc_lower or "blurring" in desc_lower or any("light" in t for t in tags):
                 couvrance = "léger"
             else:
                 couvrance = ""
                 
-            # Déduction du fini
-            if "matte" in desc_lower:
+            # Déduction du fini via description ET tags
+            if "matte" in desc_lower or any("matte" in t for t in tags):
                 fini = "mat"
-            elif "luminous" in desc_lower or "glow" in desc_lower:
+            elif "luminous" in desc_lower or "glow" in desc_lower or any("luminous" in t for t in tags):
                 fini = "lumineux"
             else:
                 fini = ""
-                # Déduction de la peau et du volume
-            peau = "grasse" if "oily" in desc_lower else "sèche" if "dry" in desc_lower else "mixte" if "combination" in desc_lower else ""
+                
+            # Déduction de la peau via description ET tags
+            if "oily" in desc_lower or "balanced" in desc_lower or any("oily" in t for t in tags):
+                peau = "grasse"
+            elif "dry" in desc_lower or any("dry" in t for t in tags):
+                peau = "sèche"
+            elif "combination" in desc_lower or any("combination" in t for t in tags):
+                peau = "mixte"
+            else:
+                peau = ""
             taille_brute = variante.get("title", "").lower()
-            volume = "12" if "mini" in taille_brute else "32" if "standard" in taille_brute else ""
+            volume = "12" if "mini" in taille_brute or "12" in taille_brute else "32" if "standard" in taille_brute or "32" in taille_brute else ""
             ligne = [product["title"], product.get("vendor"), type_produit, variante.get("price"), variante.get("compare_at_price", ""), volume, "", "", nb_teintes, fini, couvrance, peau, dispo, url_produit]
             writer.writerow(ligne)
             print(f"Page {page} scrapée avec succès.")
