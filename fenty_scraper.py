@@ -47,4 +47,4 @@ with open("fenty_teint.csv", "w", newline="", encoding="utf-8") as fichier:
             else:
                 fini = ""
             ligne = [product["title"], product.get("vendor"), product.get("product_type"), variante.get("price"), variante.get("compare_at_price", ""), "", "", "", nb_teintes, fini, couvrance, "", dispo, url_produit]
-        time.sleep(2)    
+        time.sleep(5)    
