@@ -23,10 +23,8 @@ with open("fenty_teint.csv", "w", newline="", encoding="utf-8") as fichier:
             nb_teintes = len(product.get("variants", []))
             dispo = "en stock" if variante.get("available") else "rupture"
             url_produit = f"https://fentybeauty.com/en-fr/products/{product['handle']}"
-            page_produit = requests.get(url_produit, headers=headers)
-            soup = BeautifulSoup(page_produit.text, "html.parser")
-            desc_bloc = soup.find("meta", attrs={"name": "description"})
-            description = desc_bloc["content"] if desc_bloc else ""
+            soup_desc = BeautifulSoup(product.get("body_html", ""), "html.parser")
+            description = soup_desc.get_text().strip()
             desc_lower = description.lower()
             
             # Déduction de la couvrance
@@ -47,4 +45,6 @@ with open("fenty_teint.csv", "w", newline="", encoding="utf-8") as fichier:
             else:
                 fini = ""
             ligne = [product["title"], product.get("vendor"), product.get("product_type"), variante.get("price"), variante.get("compare_at_price", ""), "", "", "", nb_teintes, fini, couvrance, "", dispo, url_produit]
+            writer.writerow(ligne)
+            print(f"Page {page} scrapée avec succès.")
         time.sleep(5)    
