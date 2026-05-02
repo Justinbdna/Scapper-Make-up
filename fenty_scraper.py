@@ -11,7 +11,6 @@ print("Nombre de produits trouvés :", len(data["products"]))
 
 with open("fenty_teint.csv", "w", newline="", encoding="utf-8") as fichier:
     writer = csv.writer(fichier)
-    writer.writerow(["product_name", "brand", "category", "price", "promo_price", "volume_ml", "rating", "review_count", "shade_count", "finish_type", "coverage_level", "skin_type", "availability", "source_url"])
     for product in data["products"]:
         writer.writerow([product["title"], f"https://fentybeauty.com/en-fr/products/{product['handle']}"])
         variante = product["variants"][0] if product.get("variants") else {}
