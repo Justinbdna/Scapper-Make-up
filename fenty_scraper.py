@@ -21,9 +21,26 @@ with open("fenty_teint.csv", "w", newline="", encoding="utf-8") as fichier:
             url_produit = f"https://fentybeauty.com/en-fr/products/{product['handle']}"
             page_produit = requests.get(url_produit, headers=headers)
             soup = BeautifulSoup(page_produit.text, "html.parser")
-            desc_bloc = soup.find("div", class_="product-hero__short-description")
-            description = desc_bloc.text.strip() if desc_bloc else ""
-            ligne = [product["title"], product.get("vendor"), product.get("product_type"), variante.get("price"), variante.get("compare_at_price", ""), "", "", "", nb_teintes, "", "", "", dispo, f"https://fentybeauty.com/en-fr/products/{product['handle']}"]
-            writer.writerow(ligne)
-        print(f"Page {page} scrapée.")
+            desc_bloc = soup.find("meta", attrs={"name": "description"})
+            description = desc_bloc["content"] if desc_bloc else ""
+            desc_lower = description.lower()
+            
+            # Déduction de la couvrance
+            if "full coverage" in desc_lower or "full" in desc_lower:
+                couvrance = "couvrant"
+            elif "medium" in desc_lower:
+                couvrance = "moyen"
+            elif "light" in desc_lower or "sheer" in desc_lower or "blurring" in desc_lower:
+                couvrance = "léger"
+            else:
+                couvrance = ""
+                
+            # Déduction du fini
+            if "matte" in desc_lower:
+                fini = "mat"
+            elif "luminous" in desc_lower or "glow" in desc_lower:
+                fini = "lumineux"
+            else:
+                fini = ""
+            ligne = [product["title"], product.get("vendor"), product.get("product_type"), variante.get("price"), variante.get("compare_at_price", ""), "", "", "", nb_teintes, fini, couvrance, "", dispo, url_produit]
         time.sleep(1)    
