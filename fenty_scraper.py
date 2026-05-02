@@ -19,6 +19,9 @@ with open("fenty_teint.csv", "w", newline="", encoding="utf-8") as fichier:
         produits = data.get("products", [])
         if not produits: break
         for product in produits:
+            type_produit = product.get("product_type", "")
+            if type_produit in ["Makeup Sponges", "Makeup Brushes", "Bundle Builder"]:
+                continue
             variante = product["variants"][0] if product.get("variants") else {}
             nb_teintes = len(product.get("variants", []))
             dispo = "en stock" if variante.get("available") else "rupture"
@@ -45,7 +48,11 @@ with open("fenty_teint.csv", "w", newline="", encoding="utf-8") as fichier:
                 fini = "lumineux"
             else:
                 fini = ""
-            ligne = [product["title"], product.get("vendor"), product.get("product_type"), variante.get("price"), variante.get("compare_at_price", ""), taille, "", "", nb_teintes, fini, couvrance, "", dispo, url_produit]
+                # Déduction de la peau et du volume
+            peau = "grasse" if "oily" in desc_lower else "sèche" if "dry" in desc_lower else "mixte" if "combination" in desc_lower else ""
+            taille_brute = variante.get("title", "").lower()
+            volume = "12" if "mini" in taille_brute else "32" if "standard" in taille_brute else ""
+            ligne = [product["title"], product.get("vendor"), type_produit, variante.get("price"), variante.get("compare_at_price", ""), volume, "", "", nb_teintes, fini, couvrance, peau, dispo, url_produit]
             writer.writerow(ligne)
             print(f"Page {page} scrapée avec succès.")
         time.sleep(5)    
